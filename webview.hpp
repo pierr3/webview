@@ -117,13 +117,15 @@ class WebView {
 public:
     WebView(int width_ = 800, int height_ = 600, bool resizable_ = true,
             bool debug_ = true, const String& title_ = Str("Webview"),
-            const String& url_ = DEFAULT_URL)
+            const String& url_ = DEFAULT_URL, bool closeable_ = true, bool onTop_ = false)
         : width(width_),
           height(height_),
           resizable(resizable_),
           debug(debug_),
           title(title_),
-          url(url_) {}
+          url(url_),
+          closeable(closeable_),
+          onTop(onTop_) {}
     int init();                            // Initialize webview
     void setCallback(jscb callback);       // JS callback
     void setTitle(String t);               // Set title of window
@@ -143,6 +145,8 @@ private:
     int width;
     int height;
     bool resizable;
+    bool closeable = true;
+    bool onTop = false;
     bool fullscreen = false;
     bool fullscreenFromJS = false;
     bool debug;
@@ -330,15 +334,29 @@ int WebView::WinInit() {
 
     RECT rect = {};
     GetWindowRect(hwnd, &rect);
-    SetWindowPos(hwnd, nullptr, rect.left, rect.top,
-                 MulDiv(width, dpi, USER_DEFAULT_SCREEN_DPI),
-                 MulDiv(height, dpi, USER_DEFAULT_SCREEN_DPI),
-                 SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+
+    if (onTop) {
+        SetWindowPos(hwnd, HWND_TOPMOST, rect.left, rect.top,
+                    MulDiv(width, dpi, USER_DEFAULT_SCREEN_DPI),
+                    MulDiv(height, dpi, USER_DEFAULT_SCREEN_DPI),
+                    SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+    } else {
+        SetWindowPos(hwnd, nullptr, rect.left, rect.top,
+                    MulDiv(width, dpi, USER_DEFAULT_SCREEN_DPI),
+                    MulDiv(height, dpi, USER_DEFAULT_SCREEN_DPI),
+                    SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+    }
+
 
     if (!resizable) {
         auto style = GetWindowLongPtr(hwnd, GWL_STYLE);
         style &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
         SetWindowLongPtr(hwnd, GWL_STYLE, style);
+    }
+
+    if (!closeable) {
+        EnableMenuItem(GetSystemMenu(hwnd, FALSE), SC_CLOSE,
+                        MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
     }
 
     // Used with GetWindowLongPtr in WndProcedure
@@ -779,6 +797,11 @@ int WebView::init() {
         style |= NSWindowStyleMaskResizable;
     }
 
+    // Set window to be non-closeable
+    if (closeable) {
+        style |= NSWindowStyleMaskClosable;
+    }
+
     // Initialize Cocoa window
     window = [[NSWindow alloc]
         // Initial window size
@@ -793,6 +816,11 @@ int WebView::init() {
 
     // Position window in center of screen
     [window center];
+
+    // Set window to be always on top
+    if (onTop) {
+        [window setLevel: NSFloatingWindowLevel];
+    }
 
     // Initialize WKWebView
     WKWebViewConfiguration* config = [WKWebViewConfiguration new];
