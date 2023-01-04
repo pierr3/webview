@@ -432,6 +432,16 @@ bool WebView::run() {
     return !loop;
 }
 
+bool WebView::run_nonblocking() {
+    while (PeekMessage (&uMsg, NULL, 0, 0, PM_REMOVE) > 0) //Or use an if statement
+    {
+        TranslateMessage (&uMsg);
+        DispatchMessage (&uMsg);
+    }
+    // TODO: fix
+    return false;
+}
+
 LRESULT CALLBACK WebView::WndProcedure(HWND hwnd, UINT msg, WPARAM wparam,
                                        LPARAM lparam) {
     WebView* w =
@@ -944,6 +954,18 @@ bool WebView::run() {
     return should_exit;
 }
 
+bool WebView::run_nonblocking() {
+    NSEvent* event = [NSApp nextEventMatchingMask:NSEventMaskAny
+                                        untilDate:[NSDate now]
+                                           inMode:NSDefaultRunLoopMode
+                                          dequeue:true];
+    if (event) {
+        [NSApp sendEvent:event];
+    }
+
+    return should_exit;
+}
+
 void WebView::navigate(std::string u) {
     if (!init_done) {
         url = u;
@@ -1090,6 +1112,11 @@ void WebView::setBgColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 
 bool WebView::run() {
     gtk_main_iteration_do(true);
+    return should_exit;
+}
+
+bool WebView::run_nonblocking() {
+    gtk_main_iteration_do(false);
     return should_exit;
 }
 
