@@ -789,7 +789,7 @@ int WebView::init() {
     pool = [NSAutoreleasePool new];
 
     // Window style: titled, closable, minimizable
-    uint style = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable |
+    uint style = NSWindowStyleMaskTitled |
                  NSWindowStyleMaskMiniaturizable;
 
     // Set window to be resizable
@@ -798,7 +798,7 @@ int WebView::init() {
     }
 
     // Set window to be non-closeable
-    if (!closeable) {
+    if (closeable) {
         style |= NSWindowStyleMaskClosable;
     }
 
