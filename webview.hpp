@@ -145,8 +145,8 @@ private:
     int width;
     int height;
     bool resizable;
-    bool closeable = true;
-    bool onTop = false;
+    bool closeable;
+    bool onTop;
     bool fullscreen = false;
     bool fullscreenFromJS = false;
     bool debug;
@@ -798,7 +798,7 @@ int WebView::init() {
     }
 
     // Set window to be non-closeable
-    if (closeable) {
+    if (!closeable) {
         style |= NSWindowStyleMaskClosable;
     }
 
