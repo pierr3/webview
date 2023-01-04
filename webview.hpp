@@ -134,6 +134,7 @@ public:
     void setBgColor(uint8_t r, uint8_t g, uint8_t b,
                     uint8_t a);      // Set background color
     bool run();                      // Main loop
+    bool run_nonblocking();          // Main loop that does not block
     void navigate(String u);         // Navigate to URL
     void preEval(const String& js);  // Eval JS before page loads
     void eval(const String& js);     // Eval JS
