@@ -989,6 +989,14 @@ int WebView::init() {
     gtk_window_set_resizable(GTK_WINDOW(window), resizable);
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
 
+    if (onTop) {
+        gtk_window_set_keep_above(GTK_WINDOW(window), TRUE);
+    }
+
+    if (!closeable) {
+        gtk_window_set_deletable(GTK_WINDOW(window), FALSE);
+    }
+
     // Add scrolling container
     GtkWidget* scroller = gtk_scrolled_window_new(nullptr, nullptr);
     gtk_container_add(GTK_CONTAINER(window), scroller);
