@@ -146,13 +146,13 @@ private:
     int width;
     int height;
     bool resizable;
-    bool closeable;
-    bool onTop;
     bool fullscreen = false;
     bool fullscreenFromJS = false;
     bool debug;
     String title;
     String url;
+    bool closeable;
+    bool onTop;
 
     jscb js_callback;
     bool init_done = false;  // Finished running init
