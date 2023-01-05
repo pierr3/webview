@@ -434,13 +434,13 @@ bool WebView::run() {
 }
 
 bool WebView::run_nonblocking() {
-    while (PeekMessage (&uMsg, NULL, 0, 0, PM_REMOVE) > 0) //Or use an if statement
-    {
-        TranslateMessage (&uMsg);
-        DispatchMessage (&uMsg);
+    bool loop = PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0;
+    if (loop) {
+        TranslateMessage (&msg);
+        DispatchMessage (&msg);
     }
-    // TODO: fix
-    return false;
+
+    return !loop;
 }
 
 LRESULT CALLBACK WebView::WndProcedure(HWND hwnd, UINT msg, WPARAM wparam,
