@@ -970,8 +970,8 @@ bool WebView::run_nonblocking() {
 void WebView::navigate(std::string u) {
     if (!init_done) {
         url = u;
-    } else if (constexpr auto prefix = "data:text/html,"; u.rfind(prefix, 0) == 0) {
-        constexpr auto len = std::string(prefix).size();
+    } else if (auto prefix = "data:text/html,"; u.rfind(prefix, 0) == 0) {
+        auto len = std::string(prefix).size();
         [webview loadHTMLString:[NSString stringWithUTF8String:u.substr(0, len).c_str()]
                         baseURL:nil];
     } else {
