@@ -971,8 +971,8 @@ void WebView::navigate(std::string u) {
     if (!init_done) {
         url = u;
     } else if (auto prefix = "data:text/html,"; u.rfind(prefix, 0) == 0) {
-        auto len = std::string(prefix).size();
-        [webview loadHTMLString:[NSString stringWithUTF8String:u.substr(0, len).c_str()]
+        auto len = std::string(prefix).length();
+        [webview loadHTMLString:[NSString stringWithUTF8String:u.substr(len).c_str()]
                         baseURL:nil];
     } else {
         [webview
