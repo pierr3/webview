@@ -16,9 +16,9 @@ target_compile_features(project_options INTERFACE cxx_std_17)
 include(cmake/Sanitizers.cmake)
 enable_sanitizers(project_options)
 
-#add_library(project_warnings INTERFACE)
-#include(cmake/Warnings.cmake)
-#set_project_warnings(project_warnings)
+add_library(project_warnings INTERFACE)
+include(cmake/Warnings.cmake)
+set_project_warnings(project_warnings)
 
 include(cmake/StaticAnalyzers.cmake)
 include(cmake/NuGet.cmake)
